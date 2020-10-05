@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/kryptonian/static/css/main.5f361e03.chunk.css",
+    "main.js": "/kryptonian/static/js/main.081a108a.chunk.js",
+    "main.js.map": "/kryptonian/static/js/main.081a108a.chunk.js.map",
+    "runtime-main.js": "/kryptonian/static/js/runtime-main.14599ae8.js",
+    "runtime-main.js.map": "/kryptonian/static/js/runtime-main.14599ae8.js.map",
+    "static/js/2.809bd95f.chunk.js": "/kryptonian/static/js/2.809bd95f.chunk.js",
+    "static/js/2.809bd95f.chunk.js.map": "/kryptonian/static/js/2.809bd95f.chunk.js.map",
+    "index.html": "/kryptonian/index.html",
+    "precache-manifest.d6824bcf2cee25f858bdb4fcf05f8a4d.js": "/kryptonian/precache-manifest.d6824bcf2cee25f858bdb4fcf05f8a4d.js",
+    "service-worker.js": "/kryptonian/service-worker.js",
+    "static/css/main.5f361e03.chunk.css.map": "/kryptonian/static/css/main.5f361e03.chunk.css.map",
+    "static/js/2.809bd95f.chunk.js.LICENSE.txt": "/kryptonian/static/js/2.809bd95f.chunk.js.LICENSE.txt",
+    "static/media/logo.svg": "/kryptonian/static/media/logo.5d5d9eef.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.14599ae8.js",
+    "static/js/2.809bd95f.chunk.js",
+    "static/css/main.5f361e03.chunk.css",
+    "static/js/main.081a108a.chunk.js"
+  ]
+}
