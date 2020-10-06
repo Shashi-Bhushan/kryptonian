@@ -1,11 +1,13 @@
 import React, { ChangeEvent, FormEvent } from "react";
+import Aes from "aes-js";
 import TextField from "../TextField";
 import TextArea from "../TextArea";
 
 interface SymmetricFormState {
   secretKey: string;
   plainText: string;
-  showModal: boolean;
+  cipherText: string;
+  encrypt: boolean;
 }
 
 class SymmetricForm extends React.Component<{}, SymmetricFormState> {
@@ -14,8 +16,9 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
 
     this.state = {
       secretKey: "",
-      plainText: "",
-      showModal: false,
+      plainText: "Text to encrypt",
+      cipherText: "",
+      encrypt: true,
     };
   }
 
@@ -35,9 +38,84 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
     });
   };
 
+  getPaddedString(str: string) {
+    let len = str.length;
+
+    let rem = len % 16;
+    if (rem == 0) return str;
+    else {
+      let newLength = (Math.floor(len / 16) + 1) * 16;
+
+      return str.padEnd(newLength);
+    }
+  }
+
   onEncryptClick = () => {
-    console.log("Encrypt " + this.state.plainText);
+    // Convert plaintext to bytes
+    let bytes = Aes.utils.utf8.toBytes(
+      this.getPaddedString(this.state.plainText)
+    );
+
+    console.log(Aes.utils.utf8.toBytes(this.state.secretKey).length);
+
+    // create Aes instance with secret key
+    let ecb = new Aes.ModeOfOperation.ecb(
+      Aes.utils.utf8.toBytes(this.state.secretKey)
+    );
+
+    let encryptedBytes = ecb.encrypt(bytes);
+
+    let encryptedText = Aes.utils.utf8.fromBytes(encryptedBytes);
+
+    this.setState({
+      cipherText: encryptedText,
+      encrypt: false,
+    });
+    console.log("encrypted " + this.state.plainText + " to " + encryptedText)
+    console.log("decrypted is " + Aes.utils.utf8.fromBytes(ecb.decrypt(encryptedBytes)))
   };
+
+  renderTextFields() {
+    if (this.state.encrypt)
+      return (
+        <TextArea
+          label={"Plain Text"}
+          id={"plain-text"}
+          placeholder={"Enter text to Encrypt"}
+          onChange={(e) => this.onPlainTextChange(e.valueOf())}
+        />
+      );
+    else
+      return (
+        <TextArea
+          label={"Secret Text"}
+          id={"secret-text"}
+          placeholder={"Enter text to Decrypt"}
+          onChange={(e) => this.onPlainTextChange(e.valueOf())}
+        />
+      );
+  }
+
+  renderButtons() {
+    if (this.state.encrypt)
+      return (
+        <button
+          className="ui positive toggle button"
+          onClick={this.onEncryptClick}
+        >
+          Encrypt
+        </button>
+      );
+    else
+      return (
+        <button
+          className="ui positive toggle button"
+          onClick={this.onEncryptClick}
+        >
+          Decrypt
+        </button>
+      );
+  }
 
   render(): React.ReactNode {
     return (
@@ -89,12 +167,19 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
             />
           </div>
 
-          <TextArea
-            label={"Plain Text"}
-            id={"plain-text"}
-            placeholder={"Enter text to Encrypt"}
-            onChange={(e) => this.onPlainTextChange(e.valueOf())}
-          />
+          <div className={"ui field"}>
+            <div className="ui toggle right floated primary checkbox">
+              <input
+                type="checkbox"
+                name="public"
+                checked={this.state.encrypt}
+                onChange={(e) => this.setState({ encrypt: e.target.checked })}
+              />
+              <label>Encrypt</label>
+            </div>
+          </div>
+
+          {this.renderTextFields()}
 
           <div className={"ui field"} style={{ marginTop: "10px" }}>
             <div className="ui buttons">
@@ -102,15 +187,11 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
 
               <div className="or" />
 
-              <button
-                className="ui positive toggle button"
-                onClick={this.onEncryptClick}
-              >
-                Encrypt
-              </button>
+              {this.renderButtons()}
             </div>
           </div>
-          <div className={"field"}>
+
+          <div className={"ui field"}>
             <div className="ui buttons">
               <button className="ui positive toggle button">
                 Create Keypair
