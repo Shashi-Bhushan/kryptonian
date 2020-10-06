@@ -1,50 +1,32 @@
-import React from 'react';
-import TextField from "./TextField";
-import TextArea from "./TextArea";
-
-
+import React from "react";
+import SymmetricEncryption from "./tab/SymmetricEncryption";
 
 class Tab extends React.Component {
-
   render() {
     return (
       <div>
         <div className="ui top attached tabular menu">
           <div className="active item">
+            <i className={"key icon"} />
             Symmetric Encryption
           </div>
 
           <div className="item">
+            <i className={"key icon"} />
             Asymmetric Encryption
           </div>
 
           <div className="item">
-            Signature
+            <i className={"pencil alternate icon"} /> Signature
           </div>
 
           <div className="item">
-            Hashing
+            <i className={"hashtag icon"} /> Hashing
           </div>
         </div>
 
         <div className="ui bottom attached active tab segment">
-          <form className="ui form error">
-            <TextField label={"Secret key"} id={"key"} text={"text"} />
-
-            <TextArea label={"Plain Text"} id={"key"} text={"text"} />
-
-            <br />
-            <br />
-            <div className={"field"}>
-              <div className="ui buttons">
-                <button className="ui button">Reset</button>
-
-                <div className="or"/>
-
-                <button className="ui positive toggle button">Encrypt</button>
-              </div>
-            </div>
-          </form>
+          <SymmetricEncryption />
         </div>
       </div>
     );

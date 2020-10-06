@@ -1,21 +1,24 @@
-import React from 'react';
-import {Link} from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 
 interface TextFieldProps {
-  id: string,
-  label: string,
-  text: string
+  id: string;
+  label: string;
+  placeholder: string;
 }
 
 class TextField extends React.Component<TextFieldProps> {
   render() {
     return (
-      <div className={"field"}>
-        <label htmlFor={this.props.id}>
-          {this.props.label}
-        </label>
-        <input type={"text"} value={this.props.text} width={"50%"}/>
-      </div>);
+      <div>
+        <label htmlFor={this.props.id}>{this.props.label}</label>
+
+        <div className="ui icon input">
+          <input type={"text"} placeholder={this.props.placeholder} width={"50%"} />
+            <i className="inverted circular sync link icon"/>
+        </div>
+      </div>
+    );
   }
 }
 

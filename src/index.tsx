@@ -9,7 +9,6 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import SymmetricEncryptionForm from "./components/SymmetricEncryptionForm";
 import Tab from "./components/Tab";
 
 // const React = require('react') // CommonJS module system
