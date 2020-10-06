@@ -16,7 +16,10 @@ class Header extends React.Component {
             <i className="dropdown icon"/>
             <div className="menu">
               <a className="item">
-                <i className="address card outline icon"/> About Me
+                <i className="info circle icon"/> About Kryptonian
+              </a>
+              <a className="item">
+                <i className="user secret icon"/> About the author
               </a>
             </div>
           </div>

@@ -1,12 +1,48 @@
-import React from "react";
+import React, { ChangeEvent, FormEvent } from "react";
 import TextField from "../TextField";
 import TextArea from "../TextArea";
 
-class SymmetricEncryption extends React.Component {
+interface SymmetricFormState {
+  secretKey: string;
+  plainText: string;
+  showModal: boolean;
+}
+
+class SymmetricForm extends React.Component<{}, SymmetricFormState> {
+  constructor(props: {}, context: any) {
+    super(props, context);
+
+    this.state = {
+      secretKey: "",
+      plainText: "",
+      showModal: false,
+    };
+  }
+
+  onFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  onSecretKeyChange = (text: string) => {
+    this.setState({
+      secretKey: text,
+    });
+  };
+
+  onPlainTextChange = (text: string) => {
+    this.setState({
+      plainText: text,
+    });
+  };
+
+  onEncryptClick = () => {
+    console.log("Encrypt " + this.state.plainText);
+  };
+
   render(): React.ReactNode {
     return (
       <div>
-        <form className="ui form error">
+        <form className="ui form error" onSubmit={this.onFormSubmit}>
           <div className={"ui field"}>
             <label>Encryption Type</label>
             <div className="ui fluid selection dropdown">
@@ -49,6 +85,7 @@ class SymmetricEncryption extends React.Component {
               label={"Secret key"}
               id={"key"}
               placeholder={"Enter/Generate secret key"}
+              onChange={(e) => this.onSecretKeyChange(e.valueOf())}
             />
           </div>
 
@@ -56,17 +93,21 @@ class SymmetricEncryption extends React.Component {
             label={"Plain Text"}
             id={"plain-text"}
             placeholder={"Enter text to Encrypt"}
+            onChange={(e) => this.onPlainTextChange(e.valueOf())}
           />
 
-          <br />
-          <br />
-          <div className={"ui field"}>
+          <div className={"ui field"} style={{ marginTop: "10px" }}>
             <div className="ui buttons">
               <button className="ui button">Reset</button>
 
               <div className="or" />
 
-              <button className="ui positive toggle button">Encrypt</button>
+              <button
+                className="ui positive toggle button"
+                onClick={this.onEncryptClick}
+              >
+                Encrypt
+              </button>
             </div>
           </div>
           <div className={"field"}>
@@ -82,4 +123,4 @@ class SymmetricEncryption extends React.Component {
   }
 }
 
-export default SymmetricEncryption;
+export default SymmetricForm;

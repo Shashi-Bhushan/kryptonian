@@ -1,5 +1,5 @@
 import React from "react";
-import SymmetricEncryption from "./tab/SymmetricEncryption";
+import SymmetricForm from "./tab/SymmetricForm";
 
 class Tab extends React.Component {
   render() {
@@ -26,7 +26,7 @@ class Tab extends React.Component {
         </div>
 
         <div className="ui bottom attached active tab segment">
-          <SymmetricEncryption />
+          <SymmetricForm />
         </div>
       </div>
     );
