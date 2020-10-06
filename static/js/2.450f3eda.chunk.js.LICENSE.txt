@@ -4,6 +4,8 @@ object-assign
 @license MIT
 */
 
+/*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */
+
 /** @license React v0.19.1
  * scheduler.production.min.js
  *

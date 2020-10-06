@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/kryptonian/static/js/main.311219a1.chunk.js",
-    "main.js.map": "/kryptonian/static/js/main.311219a1.chunk.js.map",
+    "main.js": "/kryptonian/static/js/main.cbc371d6.chunk.js",
+    "main.js.map": "/kryptonian/static/js/main.cbc371d6.chunk.js.map",
     "runtime-main.js": "/kryptonian/static/js/runtime-main.14599ae8.js",
     "runtime-main.js.map": "/kryptonian/static/js/runtime-main.14599ae8.js.map",
-    "static/js/2.f58a9e56.chunk.js": "/kryptonian/static/js/2.f58a9e56.chunk.js",
-    "static/js/2.f58a9e56.chunk.js.map": "/kryptonian/static/js/2.f58a9e56.chunk.js.map",
+    "static/js/2.450f3eda.chunk.js": "/kryptonian/static/js/2.450f3eda.chunk.js",
+    "static/js/2.450f3eda.chunk.js.map": "/kryptonian/static/js/2.450f3eda.chunk.js.map",
     "index.html": "/kryptonian/index.html",
-    "precache-manifest.fd0a7520c6a2a62ee54f7dbc4b799dbd.js": "/kryptonian/precache-manifest.fd0a7520c6a2a62ee54f7dbc4b799dbd.js",
+    "precache-manifest.3bbbeb8e783df960c41f6b68e6f70d97.js": "/kryptonian/precache-manifest.3bbbeb8e783df960c41f6b68e6f70d97.js",
     "service-worker.js": "/kryptonian/service-worker.js",
-    "static/js/2.f58a9e56.chunk.js.LICENSE.txt": "/kryptonian/static/js/2.f58a9e56.chunk.js.LICENSE.txt"
+    "static/js/2.450f3eda.chunk.js.LICENSE.txt": "/kryptonian/static/js/2.450f3eda.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.14599ae8.js",
-    "static/js/2.f58a9e56.chunk.js",
-    "static/js/main.311219a1.chunk.js"
+    "static/js/2.450f3eda.chunk.js",
+    "static/js/main.cbc371d6.chunk.js"
   ]
 }
