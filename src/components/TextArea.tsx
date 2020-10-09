@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from "react";
+import React, { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 
 interface TextAreaProps {
@@ -6,6 +6,7 @@ interface TextAreaProps {
   label: string;
   placeholder: string;
   onChange: (s: string) => void;
+  value: string;
 }
 
 interface TextAreaState {
@@ -35,7 +36,11 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
         <label htmlFor={this.props.id} className="ui secondary pointing">
           {this.props.label}
         </label>
-        <textarea placeholder={this.props.placeholder} onChange={this.onInputChange} />
+        <textarea
+          value={this.props.value}
+          placeholder={this.props.placeholder}
+          onChange={this.onInputChange}
+        />
       </span>
     );
   }

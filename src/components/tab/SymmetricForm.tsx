@@ -2,6 +2,8 @@ import React, { ChangeEvent, FormEvent } from "react";
 import Aes from "aes-js";
 import TextField from "../TextField";
 import TextArea from "../TextArea";
+import { Base64 } from "js-base64";
+import EncryptionUtil from "../util/util";
 
 interface SymmetricFormState {
   secretKey: string;
@@ -15,8 +17,8 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
     super(props, context);
 
     this.state = {
-      secretKey: "",
-      plainText: "Text to encrypt",
+      secretKey: "TextMustBe16Byte",
+      plainText: "Plain text",
       cipherText: "",
       encrypt: true,
     };
@@ -38,25 +40,19 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
     });
   };
 
-  getPaddedString(str: string) {
-    let len = str.length;
+  onCipherTextChange = (text: string) => {
+    this.setState({
+      cipherText: text,
+    });
+  };
 
-    let rem = len % 16;
-    if (rem == 0) return str;
-    else {
-      let newLength = (Math.floor(len / 16) + 1) * 16;
 
-      return str.padEnd(newLength);
-    }
-  }
 
   onEncryptClick = () => {
     // Convert plaintext to bytes
     let bytes = Aes.utils.utf8.toBytes(
-      this.getPaddedString(this.state.plainText)
+      EncryptionUtil.getPaddedString(this.state.plainText)
     );
-
-    console.log(Aes.utils.utf8.toBytes(this.state.secretKey).length);
 
     // create Aes instance with secret key
     let ecb = new Aes.ModeOfOperation.ecb(
@@ -65,14 +61,34 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
 
     let encryptedBytes = ecb.encrypt(bytes);
 
-    let encryptedText = Aes.utils.utf8.fromBytes(encryptedBytes);
+    let encryptedText = Base64.fromUint8Array(encryptedBytes, true);
 
     this.setState({
+      plainText: "",
       cipherText: encryptedText,
       encrypt: false,
     });
-    console.log("encrypted " + this.state.plainText + " to " + encryptedText)
-    console.log("decrypted is " + Aes.utils.utf8.fromBytes(ecb.decrypt(encryptedBytes)))
+  };
+
+  onDecryptClick = () => {
+    // create Aes instance with secret key
+    let ecb = new Aes.ModeOfOperation.ecb(
+      Aes.utils.utf8.toBytes(this.state.secretKey)
+    );
+
+    let encryptedBytes = Base64.toUint8Array(
+      EncryptionUtil.getPaddedBase64String(this.state.cipherText)
+    );
+
+    let decryptedBytes = ecb.decrypt(encryptedBytes);
+
+    let decryptedText = Aes.utils.utf8.fromBytes(decryptedBytes).trimEnd();
+
+    this.setState({
+      plainText: decryptedText,
+      cipherText: "",
+      encrypt: true,
+    });
   };
 
   renderTextFields() {
@@ -81,6 +97,7 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
         <TextArea
           label={"Plain Text"}
           id={"plain-text"}
+          value={this.state.plainText}
           placeholder={"Enter text to Encrypt"}
           onChange={(e) => this.onPlainTextChange(e.valueOf())}
         />
@@ -90,8 +107,9 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
         <TextArea
           label={"Secret Text"}
           id={"secret-text"}
+          value={this.state.cipherText}
           placeholder={"Enter text to Decrypt"}
-          onChange={(e) => this.onPlainTextChange(e.valueOf())}
+          onChange={(e) => this.onCipherTextChange(e.valueOf())}
         />
       );
   }
@@ -110,7 +128,7 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
       return (
         <button
           className="ui positive toggle button"
-          onClick={this.onEncryptClick}
+          onClick={this.onDecryptClick}
         >
           Decrypt
         </button>
@@ -137,7 +155,7 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
                 3. Generate Random secret key instead of having to write it yourself
                 */}
               <div className="menu">
-                <div className="item key"></div>
+                <div className="item key" />
                 <div className="item" data-value="jenny">
                   <img
                     className="ui mini avatar image"
@@ -162,6 +180,7 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
             <TextField
               label={"Secret key"}
               id={"key"}
+              value={this.state.secretKey}
               placeholder={"Enter/Generate secret key"}
               onChange={(e) => this.onSecretKeyChange(e.valueOf())}
             />
@@ -183,7 +202,17 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
 
           <div className={"ui field"} style={{ marginTop: "10px" }}>
             <div className="ui buttons">
-              <button className="ui button">Reset</button>
+              <button
+                className="ui button"
+                onClick={(e) => this.setState({
+                  secretKey: "",
+                  plainText: "",
+                  cipherText: "",
+                  encrypt: true,
+                })}
+              >
+                Reset
+              </button>
 
               <div className="or" />
 
