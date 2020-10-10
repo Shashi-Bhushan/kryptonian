@@ -9,7 +9,7 @@ class Header extends React.Component {
     return (
       <Menu>
         <Menu.Item>
-          <Link to={"/"} className="item">
+          <Link to={"/"} className={"link"}>
             <i className="home icon" /> Kryptonian
           </Link>
         </Menu.Item>
