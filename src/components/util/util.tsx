@@ -28,18 +28,18 @@ class EncryptionUtil {
     }
   }
 
-  public static getRandomSecret() {
-    let arr = new Uint8Array(16);
+  public static getRandomSecret(len: number = 16) {
+    let arr = new Uint8Array(len);
 
     window.crypto.getRandomValues(arr);
-    console.log("calling");
+    console.log(
+      "secret key len " + len + Array.from(arr, this.dec2hex).join("").length
+    );
     return Array.from(arr, this.dec2hex).join("");
   }
 
-  private static dec2hex (dec: number) {
-    return dec < 10
-      ? '0' + String(dec)
-      : dec.toString(16)
+  private static dec2hex(dec: number) {
+    return dec < 10 ? "0" + String(dec) : dec.toString(16);
   }
 }
 

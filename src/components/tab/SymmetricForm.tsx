@@ -1,14 +1,21 @@
 import React, { ChangeEvent, FormEvent } from "react";
 import Aes from "aes-js";
-import TextField from "../TextField";
+import { Dropdown } from "semantic-ui-react";
 import TextArea from "../TextArea";
 import { Base64 } from "js-base64";
 import EncryptionUtil from "../util/util";
+
+interface EncryptionConfiguration {
+  encryptionType: string;
+  encryptionMode: string;
+  keySize: number;
+}
 
 interface SymmetricFormState {
   secretKey: string;
   plainText: string;
   cipherText: string;
+  encryptionConfig: EncryptionConfiguration;
   encrypt: boolean;
 }
 
@@ -20,9 +27,95 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
       secretKey: "TextMustBe16Byte",
       plainText: "Plain text",
       cipherText: "",
+      encryptionConfig: {
+        encryptionType: "AES",
+        encryptionMode: "ECB",
+        keySize: 16,
+      },
       encrypt: true,
     };
   }
+
+  private static encryptionOptions = [
+    {
+      key: "AES",
+      text: "AES (Advanced Encryption Standard)",
+      value: "AES",
+    },
+    {
+      key: "DES",
+      text: "DES (Data Encryption Standard)",
+      value: "DES",
+    },
+    {
+      key: "RC4",
+      text: "RC4 (Rivest Cipher 4)",
+      value: "RC4",
+    },
+    {
+      key: "RC5",
+      text: "RC5 (Rivest Cipher 5)",
+      value: "RC5",
+    },
+    {
+      key: "RC6",
+      text: "RC6 (Rivest Cipher 6)",
+      value: "RC6",
+    },
+  ];
+
+  private static encryptionModes = {
+    AES: [
+      {
+        key: "ECB",
+        text: "ECB (Electronic codebook)",
+        value: "ECB",
+      },
+      {
+        key: "CBC",
+        text: "CBC (Cipher block chaining)",
+        value: "CBC",
+      },
+    ],
+  };
+
+  private static keySizes = {
+    AES: [
+      {
+        key: "16",
+        text: "16 bits",
+        value: 16,
+      },
+      {
+        key: "24",
+        text: "24 bits",
+        value: 24,
+      },
+      {
+        key: "32",
+        text: "32 bits",
+        value: 32,
+      },
+    ],
+  };
+
+  private getCipherInstance = () => {
+    // create Aes instance with secret key
+    if (this.state.encryptionConfig.encryptionType == "AES") {
+      if (this.state.encryptionConfig.encryptionMode == "ECB") {
+        return new Aes.ModeOfOperation.ecb(
+          Aes.utils.utf8.toBytes(this.state.secretKey)
+        );
+      } else {
+        return new Aes.ModeOfOperation.cbc(
+          Aes.utils.utf8.toBytes(this.state.secretKey),
+          new Uint8Array([1, 2, 3, 4])
+        );
+      }
+    } else {
+      throw new Error("Valid Encryption mode not selected.");
+    }
+  };
 
   onFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,8 +139,6 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
     });
   };
 
-
-
   onEncryptClick = () => {
     // Convert plaintext to bytes
     let bytes = Aes.utils.utf8.toBytes(
@@ -55,11 +146,9 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
     );
 
     // create Aes instance with secret key
-    let ecb = new Aes.ModeOfOperation.ecb(
-      Aes.utils.utf8.toBytes(this.state.secretKey)
-    );
+    let aes = this.getCipherInstance();
 
-    let encryptedBytes = ecb.encrypt(bytes);
+    let encryptedBytes = aes.encrypt(bytes);
 
     let encryptedText = Base64.fromUint8Array(encryptedBytes, true);
 
@@ -72,9 +161,7 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
 
   onDecryptClick = () => {
     // create Aes instance with secret key
-    let ecb = new Aes.ModeOfOperation.ecb(
-      Aes.utils.utf8.toBytes(this.state.secretKey)
-    );
+    let ecb = this.getCipherInstance();
 
     let encryptedBytes = Base64.toUint8Array(
       EncryptionUtil.getPaddedBase64String(this.state.cipherText)
@@ -114,6 +201,26 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
       );
   }
 
+  renderSecretKeyTextField() {
+    if (this.state.secretKey.length == 0)
+      return (
+        <input
+          type={"text"}
+          value={this.state.secretKey}
+          placeholder={"Enter Secret Key"}
+          onChange={(e) => this.onSecretKeyChange(e.target.value)}
+        />
+      );
+    else
+      return (
+        <input
+          type={"text"}
+          value={this.state.secretKey}
+          onChange={(e) => this.onSecretKeyChange(e.target.value)}
+        />
+      );
+  }
+
   renderButtons() {
     if (this.state.encrypt)
       return (
@@ -140,50 +247,68 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
       <div>
         <form className="ui form error" onSubmit={this.onFormSubmit}>
           <div className={"ui field"}>
-            <label>Encryption Type</label>
-            <div className="ui fluid selection dropdown">
-              <input type="hidden" name="encryptionType" />
+            Select Type of Encryption
+            <Dropdown
+              placeholder="Select Encryption Type"
+              fluid
+              selection
+              value={this.state.encryptionConfig.encryptionType}
+              options={SymmetricForm.encryptionOptions}
+              onChange={(e, result) => {
+                console.log(result);
 
-              <i className="dropdown icon" />
+                this.setState({
+                  encryptionConfig: {
+                    ...this.state.encryptionConfig,
+                    encryptionMode: "AES",
+                  },
+                });
+              }}
+            />
+          </div>
 
-              <div className="default text">Select Encryption Type</div>
-
-              {/*
-                TODO:
-                1. Add info button for AES, DES etc
-                2. Generate Public/Private key pair and copy to clipboard
-                3. Generate Random secret key instead of having to write it yourself
-                */}
-              <div className="menu">
-                <div className="item key" />
-                <div className="item" data-value="jenny">
-                  <img
-                    className="ui mini avatar image"
-                    src="/images/avatar/small/jenny.jpg"
-                    title={
-                      "" +
-                      "AES (Advanced Encryption Standard)\n" +
-                      "DES (Data Encryption Standard)\n" +
-                      "IDEA (International Data Encryption Algorithm)\n" +
-                      "Blowfish (Drop-in replacement for DES or IDEA)\n" +
-                      "RC4 (Rivest Cipher 4)\n" +
-                      "RC5 (Rivest Cipher 5)\n" +
-                      "RC6 (Rivest Cipher 6)"
-                    }
-                  />
-                </div>
-              </div>
+          <div className={"ui field"}>
+            Select Encryption Mode
+            <div className={"ui field"}>
+              <Dropdown
+                placeholder="Select Encryption Mode"
+                fluid
+                selection
+                value={this.state.encryptionConfig.encryptionMode}
+                options={SymmetricForm.encryptionModes.AES}
+              />
             </div>
           </div>
 
           <div className={"ui field"}>
-            <TextField
-              label={"Secret key"}
-              id={"key"}
-              value={this.state.secretKey}
-              placeholder={"Enter/Generate secret key"}
-              onChange={(e) => this.onSecretKeyChange(e.valueOf())}
-            />
+            Select Key Size
+            <div className={"ui field"}>
+              <Dropdown
+                placeholder="Select Key Size"
+                fluid
+                selection
+                value={this.state.encryptionConfig.keySize}
+                options={SymmetricForm.keySizes.AES}
+              />
+            </div>
+          </div>
+
+          <div className={"ui field"}>
+            <label htmlFor={""}>Enter Secret Key</label>
+
+            <div className="ui icon input">
+              {this.renderSecretKeyTextField()}
+              <i
+                className="inverted circular sync link icon"
+                onClick={(e) => {
+                  this.onSecretKeyChange(
+                    EncryptionUtil.getRandomSecret(
+                      this.state.encryptionConfig.keySize
+                    )
+                  );
+                }}
+              />
+            </div>
           </div>
 
           <div className={"ui field"}>
@@ -204,12 +329,14 @@ class SymmetricForm extends React.Component<{}, SymmetricFormState> {
             <div className="ui buttons">
               <button
                 className="ui button"
-                onClick={(e) => this.setState({
-                  secretKey: "",
-                  plainText: "",
-                  cipherText: "",
-                  encrypt: true,
-                })}
+                onClick={(e) =>
+                  this.setState({
+                    secretKey: "",
+                    plainText: "",
+                    cipherText: "",
+                    encrypt: true,
+                  })
+                }
               >
                 Reset
               </button>
